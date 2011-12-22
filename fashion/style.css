@@ -1,0 +1,217 @@
+body {
+    margin: 0px;
+    padding: 0;
+    font-family: Corbel, Helvetica, Arial, sans-serif;
+    background: #F5FFFA;
+    font-size: 12px;
+    color: #0F0F0F;
+    line-height: 1.2em;
+}
+
+a {
+    color: #2E231A;
+    text-decoration: none;
+}
+
+a:hover { text-decoration: none; }
+
+/***********************************
+Navigation Menu
+************************************/
+#header {
+    display:fixed;
+    height: 50px;
+    border-bottom: 1px solid #000;
+    background-color: #333;
+    box-shadow: 1px 1px 2px #000;
+    -moz-box-shadow: 1px 1px 2px #000;
+    -webkit-box-shadow: 1px 1px 2px #000;
+}
+
+#header ul{
+    display:block;
+    float:right;
+    margin:5px 20px 5px 0;
+    padding:8px;
+    text-align:right
+}
+
+#create {
+    display:inline;
+    color:#ddd;
+    border-radius:4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    -o-border-radius:4px;
+    margin:0 4px;
+    padding:6px 10px;
+    font-family: Helvetica,sans-serif;
+    font-weight:600;
+    font-size:12px;
+    pointer:hand;
+    background-color:#F1B24A;
+    margin-top: 8px;
+    margin-left: 40px;
+    float: left;
+    cursor: pointer;
+    color: #000;
+}
+
+#header ul li{
+    display:inline;
+    color:#ddd;
+    border-radius:4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    -o-border-radius:4px;
+    margin:0 4px;
+    padding:6px 10px;
+    font-family: Helvetica,sans-serif;
+    font-weight:600;
+    font-size:12px;
+    pointer:hand;
+    background-color:#ddd;
+}
+
+#header ul li:hover, #create:hover {
+    background-color:#C6D1D6;
+    color:#222;
+    box-shadow:1px 1px 2px #000;
+    -moz-box-shadow:1px 1px 2px #000;
+    -webkit-box-shadow:1px 1px 2px #000;
+}
+
+.current { background-color:#B25B30!important; }
+.current a { color: #FFF!important; }
+
+.box {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    margin-right: 80px;
+    font-weight: normal!important;
+    text-align: left;
+    width: 180px;
+    padding: 10px;
+    border-top: 0px;
+    border-left: 2px solid #2E231A;
+    border-right: 2px solid #2E231A;
+    border-bottom: 2px solid #2E231A;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: #333;
+    color: #FFF;
+    z-index:100;
+    box-shadow: 1px 1px 2px #000;
+    -moz-box-shadow: 1px 1px 2px #000;
+    -webkit-box-shadow: 1px 1px 2px #000;
+}
+
+
+/***********************************
+Bubble Styles!
+************************************/
+#bubbles {
+    margin: 0 auto;
+    margin-top: 30px;
+}
+
+.bubble {
+    display: block;
+    border: 3px solid #B3AAAA;
+    color: #FFF;
+    font-weight: bold;
+    border-radius:4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    -o-border-radius:4px;
+    padding: 10px;
+    margin: 0 20px 10px 20px;
+    font-size: 16px;
+}
+
+.reply-counter {
+    float: right;
+    margin-right: 10px;
+    font-family: Arial;
+    font-weight: bold;
+}
+
+.inline-reply {
+  margin-left: 40px;
+}
+
+.bubble a, .reply-counter a {
+    color: #FFF;
+}
+.bubble a:hover, .reply-counter a:hover { text-decoration: underline!important; }
+
+.read-bubbles {
+    padding-top: 5px;
+    width: 960px;
+    margin:0 auto;
+    color: #000;
+}
+.anounce-bubbles {
+    width: 100%;
+    padding-top: 10px;
+    text-align: center;
+    font-size: 20px;
+}
+
+/***********************************
+Forms!
+************************************/
+form label {
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    clear: both;
+    text-align: left;
+    float: left;
+    margin-top: 5px;
+}
+
+form textarea {
+    font-size: 13px;
+    color: #333;
+    padding: 5px;
+    margin-right: 5px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    border:1px solid #B3AAAA;
+    height: 150px;
+    width: 90%;
+    background:#fff url(tu.gif) repeat-x;
+}
+
+form input:focus {
+    border-color:#FF4040;
+}
+
+form input[type=submit] {
+    color: #000 !important;
+    font-weight: bold !important;
+    font-family: Arial, Sans-Serif;
+    font-size: 13px;
+    display: block;
+    padding: 5px;
+    border:1px solid #B3AAAA;
+    background:#fff url(tu.gif) repeat-x;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/***********************************
+Clearfix
+************************************/
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix { display: inline-block; }
+.clearfix { display: block; }
