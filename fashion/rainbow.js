@@ -173,7 +173,7 @@ var Rainbow = {
         formContainer.css({'background-color' : '#B3AAAA'});
 
         var form = $('<form />', {'action' : 'actions.php?do=reply&token=' + token, 'method' : 'post'});
-        var textInput = $('<textarea />', {'name' : 'reply', 'type' : 'text', 'value' : ''});
+        var textInput = $('<textarea />', {'name' : 'reply', 'value' : ''});
 
         textInput.keyup(function() {
             if ($(this).val().length > 1000){
@@ -225,7 +225,7 @@ var Rainbow = {
         formContainer.css({'background-color' : '#B3AAAA'});
 
         var form = $('<form />', {'action' : 'actions.php?do=create&token=' + token, 'method' : 'post'});
-        var textInput = $('<textarea />', {'name' : 'quote', 'type' : 'text', 'value' : rainbowLang.createDesc});
+        var textInput = $('<textarea />', {'name' : 'quote', 'value' : rainbowLang.createDesc});
         textInput.focus(function() { $(this).val(''); });
 
         textInput.keyup(function() {
