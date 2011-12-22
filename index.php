@@ -65,7 +65,7 @@ if (!isset($_SESSION['token']))
                     <div class="box"><?php echo RAINBOW_LANG_HELP_DESCRIPTION; ?></div>
                 </li>
                 <li>
-                    <a href="https://github.com/mpratt/RAINBOW-Bubbles-Board" style="color: #7D1F1F;"><?php echo RAINBOW_LANG_MODIFY_ME; ?></a>
+                    <a href="https://github.com/mpratt/Rainbow-Guestbook" style="color: #7D1F1F;"><?php echo RAINBOW_LANG_MODIFY_ME; ?></a>
                 </li>
             </ul>
 
