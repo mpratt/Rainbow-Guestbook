@@ -22,7 +22,7 @@ una tarea fácil e intuitiva.
 
 Un demo vale más que mil palabras, asi que pruebelo:
 
-- [DEMO](http://www.michael-pratt.com/Demos/bobbie/index.php)
+- [DEMO](http://www.michael-pratt.com/Lab/rainbow/index.php)
 
 Requerimientos
 ==============
