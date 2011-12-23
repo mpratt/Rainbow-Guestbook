@@ -27,7 +27,7 @@ define('RAINBOW_ENABLE_DELETE', false);
 
 // Language Settings
 define('RAINBOW_LANG', 'es');
-define('RAINBOW_LANG_TITLE', 'Esta es mi página llena de Burbujas');
+define('RAINBOW_LANG_TITLE', 'Rainbow Guestbook - El arcoiris en tu navegador');
 define('RAINBOW_LANG_LOADING', 'Cargando..');
 define('RAINBOW_LANG_CREATE', 'Escribe tu Mensaje');
 define('RAINBOW_LANG_CREATE_BUTTON', 'Enviar Mensaje');
@@ -49,6 +49,7 @@ define('RAINBOW_LANG_ADD_FAVORITE', 'Guardar en mis mensajes favoritos');
 define('RAINBOW_LANG_REMOVE_FAVORITE', 'Remover de mis mensajes favoritos');
 define('RAINBOW_LANG_COLOR_CONFIRM', 'Quieres ver todos los mensajes recientes por este color?');
 define('RAINBOW_LANG_ERROR_BACK', 'Volver al inicio');
+define('RAINBOW_LANG_BAD_BROWSER', 'Estas usando un navegador obsoleto. Esta página necesita uno más moderno! (chrome/Firefox/IE9/Opera)');
 
 // Debug, should always be false!
 define('RAINBOW_DEBUG', false);

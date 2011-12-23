@@ -78,6 +78,9 @@ var Rainbow = {
             $('#mine').click();
         else
             $('#new').click();
+
+        if ($.browser.msie && parseInt($.browser.version) <= 7)
+            alert(rainbowLang.badBrowser);
     },
 
     // Reads all the messages from a url
@@ -127,7 +130,9 @@ var Rainbow = {
                 if (!$.isEmptyObject(response)) {
                     $.each(response, function(index, value) {
                         var reply = $('<div/>', {'class' : 'bubble'});
-                        reply.css({'background-color' : '#' + value.color});
+                        reply.css({'background-color' : '#' + value.color,
+                                   'color' : '#' + t.contrast(value.color)});
+
                         reply.html(t.autoEmbed(value.text));
                         reply.appendTo(container).fadeIn(1000);
                     });
@@ -141,6 +146,7 @@ var Rainbow = {
 
     // shows messages that were sent by a color
     viewColor : function (color) {
+        var t = this;
         $('#bubbles').empty();
         $.ajax({url: 'actions.php?do=getColor&token=' + token + '&color=' + color,
                 method:   'GET',
@@ -157,6 +163,7 @@ var Rainbow = {
                     $.each(response, function(index, value) {
                         var newBubble = $('<div/>', {'class' : 'bubble', 'text' : value.text, 'id' : 'bubble-' + value.id});
                         newBubble.css({'background-color' : '#' + color,
+                                       'color' : '#' + t.contrast(color),
                                        'text-align' : 'left',
                                        'opacity' : 0.7});
 
@@ -249,8 +256,11 @@ var Rainbow = {
         var t = this;
         var repliesCounter =  $('<div/>', {'text' : replies + ' ' + rainbowLang.replies, 'class' : 'reply-counter'});
         var textLink  = $('<a />', {'text' : text, 'href' : 'index.php?view=' + id});
+        textLink.css({'color' : '#' + t.contrast(color)})
+
         var newBubble = $('<div/>', {'class' : 'bubble', 'id' : 'bubble-' + id});
         newBubble.css({'background-color' : '#' + color,
+                       'color' : '#' + t.contrast(color),
                        'cursor' : 'pointer',
                        'text-align' : 'left',
                        'opacity' : 0.7});
@@ -278,6 +288,21 @@ var Rainbow = {
     autoEmbed : function(text) {
         var re = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube\.com\S*[^\w\-\s])([\w\-]{11})(?=[^\w\-]|$)(?![?=&+%\w]*(?:['"][^<>]*>|<\/a>))[?=&+%\w]*/ig;
         return text.replace(re, '<br /><iframe width="560" height="349" src="http://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe><br />');
+    },
+
+    // Calculates a reasonable text color depending on its bgcolor
+    contrast: function (bgcolor) {
+
+        var red   = parseInt(bgcolor.substr(0, 2), 16);
+        var green = parseInt(bgcolor.substr(2, 2), 16);
+        var blue  = parseInt(bgcolor.substr(4, 6), 16);
+        var brightness = parseInt(red + green + blue/3);
+        //var brightness = parseInt((red*299) + (green*587) + (blue*114)/1000);
+
+        if (brightness > 300)
+            return '000000';
+
+        return 'FFFFFF';
     }
 };
 

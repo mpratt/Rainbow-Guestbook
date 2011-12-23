@@ -32,6 +32,7 @@ if (!isset($_SESSION['token']))
             var rainbowLang  = {'language': '<?php echo RAINBOW_LANG; ?>',
                                 'empty': '<?php echo RAINBOW_LANG_EMPTY; ?>',
                                 'loading': '<?php echo RAINBOW_LANG_LOADING; ?>',
+                                'badBrowser': '<?php echo RAINBOW_LANG_BAD_BROWSER; ?>',
                                 'view' : '<?php echo RAINBOW_LANG_VIEW; ?>',
                                 'reply': '<?php echo RAINBOW_LANG_REPLY; ?>',
                                 'create' : '<?php echo RAINBOW_LANG_CREATE_BUTTON; ?>',
