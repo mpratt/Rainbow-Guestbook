@@ -10,10 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-if (!defined('RAINBOW')) {
-    header('Location: ../index.php');
-    die();
-}
 
 /**
  * Redirects to $page
@@ -21,10 +17,10 @@ if (!defined('RAINBOW')) {
  * @param string $page
  * @return void
  */
-function redirect_to($page = '')
+function redirectTo($page = '')
 {
     if (empty($page))
-        $page = 'index.php';
+        $page = '/';
 
     header('Location:' . $page);
     die();
@@ -37,11 +33,7 @@ function redirect_to($page = '')
  */
 function detectIp()
 {
-    if  (!empty($_SERVER['HTTP_CLIENT_IP']))
-        return $_SERVER['HTTP_CLIENT_IP'];
-    else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
-    else if (!empty($_SERVER['REMOTE_ADDR']))
+    if (!empty($_SERVER['REMOTE_ADDR']))
         return $_SERVER['REMOTE_ADDR'];
     else
         return 'unknown';
@@ -58,7 +50,7 @@ function ipColor($ip)
     $hash = sha1($ip);
     $hash = substr($hash, 0, strlen($hash) % 34);
 
-    // test just in case, but this condition should be met ALWAYS!
+    // test just in case, but this condition should ALWAYS be met!
     if (ctype_xdigit($hash) && strlen($hash) == 6)
         return $hash;
 

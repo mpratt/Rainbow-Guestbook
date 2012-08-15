@@ -10,71 +10,125 @@
  * file that was distributed with this source code.
  */
 
-define('RAINBOW', 1);
-require(dirname(__FILE__) . '/config.php');
-require(dirname(__FILE__) . '/sources/MainFunctions.php');
+    require(dirname(__FILE__) . '/config.php');
+    require(dirname(__FILE__) . '/lib/Utils.php');
+    require(dirname(__FILE__) . '/lib/Router.php');
+    require(dirname(__FILE__) . '/lib/Rainbow.php');
+    require(dirname(__FILE__) . '/lib/RainbowBookmarks.php');
 
-session_start();
-if (!isset($_SESSION['token']))
-    $_SESSION['token'] = sha1(time() . session_id() . mt_rand(1000, 5000));
+    try
+    {
+        $pdo = new PDO(RAINBOW_DB_ENGINE . ':host=' . RAINBOW_DB_HOST . ';dbname=' . RAINBOW_DB_NAME . ';charset=UTF-8',
+                       RAINBOW_DB_USER, RAINBOW_DB_PASS);
+
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->exec('SET NAMES utf8');
+
+        // Instantiate the Rainbow Object
+        $rainbow = new Rainbow($pdo);
+    }
+    catch(PDOException $e) { die('Could not connect to Database'); }
+
+    session_start();
+    if (!isset($_SESSION['token']))
+        $_SESSION['token'] = md5(time() . session_id() . mt_rand(1000, 5000));
+
+    $path = str_replace(parse_url(RAINBOW_URL, PHP_URL_PATH), '', $_SERVER['REQUEST_URI']);
+    $router = new Router($path, $_SERVER['REQUEST_METHOD']);
+
+    // Map the index controller.
+    $router->map('GET', '/', function (){
+        ob_start();
+        require_once(dirname(__FILE__) . '/templates/Main.php');
+        ob_end_flush();
+    });
+
+    // Get all the messages.
+    $router->map('GET', '/api/getAll/', function () use (&$rainbow) {
+        echo json_encode($rainbow->fetchAll());
+    }, array('Content-type' => 'application/json'));
+
+    // Get the recent modified
+    $router->map('GET', '/api/getModified/', function () use (&$rainbow) {
+        echo json_encode($rainbow->fetchLastModified());
+    }, array('Content-type' => 'application/json'));
+
+    // Get the Favorites
+    $router->map('GET', '/api/getBookmarks/', function () use (&$rainbow) {
+        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : array());
+        $bookmarks = new RainbowBookmarks($cookie);
+        echo json_encode($rainbow->fetchFavorite($bookmarks->getBookmarks()));
+    }, array('Content-type' => 'application/json'));
+
+    // Gets all the messages of the thread with $id
+    $router->map('GET', '/api/getThread/:id/', function ($id) use (&$rainbow) {
+        echo json_encode($rainbow->view($id));
+    }, array('Content-type' => 'application/json'));
+
+    // Gets all the colors
+    $router->map('GET', '/api/getColors/', function () use (&$rainbow) {
+        echo json_encode($rainbow->fetchColors());
+    }, array('Content-type' => 'application/json'));
+
+    // Gets all the messages with $color
+    $router->map('GET', '/api/getColor/:color/', function ($color) use (&$rainbow) {
+        echo json_encode($rainbow->fetchByColor($color));
+    }, array('Content-type' => 'application/json'));
+
+    // Adds a message to the bookmark cookie
+    $router->map('GET', '/api/bookmark/add/:id', function ($id) {
+        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : array());
+        $bookmarks = new RainbowBookmarks($cookie);
+        $result = $bookmarks->setBookmark($id);
+        echo json_encode(array('status' => (bool) $result));
+    }, array('Content-type' => 'application/json'));
+
+    // Removes a message from the bookmark cookie
+    $router->map('GET', '/api/bookmark/delete/:id', function ($id) {
+        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : array());
+        $bookmarks = new RainbowBookmarks($cookie);
+        $result = $bookmarks->deleteBookmark($id);
+        echo json_encode(array('status' => (bool) $result));
+    }, array('Content-type' => 'application/json'));
+
+    // Creates a new Message
+    $router->map('POST', '/api/new/', function () use (&$rainbow) {
+        $id = 0;
+        $color  = ipColor(detectIp());
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!empty($data['message']))
+        {
+            if (!empty($data['message']) && $data['token'] == $_SESSION['token'])
+                $id = $rainbow->create($data['message'], $color);
+        }
+
+        echo json_encode(array('id' => $id));
+
+    }, array('Content-type' => 'application/json'));
+
+    // Replies a Message
+    $router->map('POST', '/api/reply/:id', function ($id) use (&$rainbow) {
+        $color  = ipColor(detectIp());
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!empty($data['message']))
+        {
+            if (!empty($data['message']) && $data['token'] == $_SESSION['token'])
+                $rainbow->reply($id, $data['message'], $color);
+        }
+
+        echo json_encode(array('id' => (int) $id));
+
+    }, array('Content-type' => 'application/json'));
+
+    // Deletes a Message with an Id
+    $router->map('POST', '/api/delete/:id/', function ($id) use (&$rainbow) {
+        $result = false;
+        if (!empty($_POST['pass']) && $_POST['pass'] == RAINBOW_DELETE_PASSWORD)
+            $result = $rainbow->delete($id);
+
+        echo json_encode(array('status' => (bool) $result));
+    }, array('Content-type' => 'application/json'));
+
+    // Kickstart this shit
+    $router->run();
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo RAINBOW_LANG; ?>" lang="<?php echo RAINBOW_LANG; ?>" dir="ltr">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title><?php echo RAINBOW_LANG_TITLE; ?></title>
-        <link rel="stylesheet" href="fashion/style.css?<?php echo time(); ?>" type="text/css" />
-        <script type="text/javascript">
-            var request = <?php if (!empty($_GET)) { echo json_encode($_GET); } else { echo '{}'; } ?>;
-            var token = '<?php echo $_SESSION['token']; ?>';
-            var myColor = '<?php echo ipColor(detectIp()); ?>';
-            var rainbowLang  = {'language': '<?php echo RAINBOW_LANG; ?>',
-                                'empty': '<?php echo RAINBOW_LANG_EMPTY; ?>',
-                                'loading': '<?php echo RAINBOW_LANG_LOADING; ?>',
-                                'badBrowser': '<?php echo RAINBOW_LANG_BAD_BROWSER; ?>',
-                                'view' : '<?php echo RAINBOW_LANG_VIEW; ?>',
-                                'reply': '<?php echo RAINBOW_LANG_REPLY; ?>',
-                                'create' : '<?php echo RAINBOW_LANG_CREATE_BUTTON; ?>',
-                                'createDesc' : '<?php echo RAINBOW_LANG_CREATE; ?>',
-                                'replies': '<?php echo RAINBOW_LANG_REPLIES; ?>',
-                                'addFavorite': '<?php echo RAINBOW_LANG_ADD_FAVORITE; ?>',
-                                'removeFavorite': '<?php echo RAINBOW_LANG_REMOVE_FAVORITE; ?>',
-                                'deleteShow': '<?php echo RAINBOW_LANG_DELETE; ?>',
-                                'deleteConfirm': '<?php echo RAINBOW_LANG_DELETE_CONFIRM; ?>',
-                                'colorConfirm' : '<?php echo RAINBOW_LANG_COLOR_CONFIRM; ?>'};
-        </script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
-        <script type="text/javascript" src="fashion/rainbow.js?<?php echo time(); ?>"></script>
-    </head>
-    <body>
-        <noscript>
-            <p style="font-size: 20px; padding: 5px; text-align: center;">
-                <?php echo RAINBOW_LANG_JAVASCRIPT; ?>
-            </p>
-        </noscript>
-
-        <div id="header">
-            <ul>
-                <li id="avatar">&nbsp;</li>
-                <li><a href="index.php?new" id="new"><?php echo RAINBOW_LANG_NEW; ?></a></li>
-                <li><a href="index.php?modified" id="modified"><?php echo RAINBOW_LANG_MODIFIED; ?></a></li>
-                <li><a href="index.php?favorite" id="favorite"><?php echo RAINBOW_LANG_FAVORITES; ?></a></li>
-                <li><a href="index.php?mine" id="mine"><?php echo RAINBOW_LANG_MINE; ?></a></li>
-                <li>
-                    <a href="index.php" id="help"><?php echo RAINBOW_LANG_HELP; ?></a>
-                    <div class="box"><?php echo RAINBOW_LANG_HELP_DESCRIPTION; ?></div>
-                </li>
-                <li>
-                    <a href="https://github.com/mpratt/Rainbow-Guestbook" style="color: #7D1F1F;"><?php echo RAINBOW_LANG_MODIFY_ME; ?></a>
-                </li>
-            </ul>
-
-            <div id="create">
-                <?php echo RAINBOW_LANG_CREATE; ?>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-        <div id="bubbles"></div>
-    </body>
-</html>

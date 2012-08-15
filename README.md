@@ -7,7 +7,7 @@ comprometedor, en la base de datos solo quedá la fecha y el mensaje que se haya
 Su nombre se basa en el hecho de que cada mensaje que el visitante escriba tiene un color único,
 pues color es determinado por el hash sha1 del Ip del visitante.
 
-Rainbow usa javascript (Jquery) y solo funciona con navegadores modernos, por ejemplo Internet explorer 7
+Rainbow usa Backbone.js, (Jquery) y solo funciona con navegadores modernos, por ejemplo Internet explorer 7
 tiene algunas dificultades mostrando correctamente el contenido de los mensajes. En otros navegadores como
 Google Chrome, Firefox y Opera no se han encontrado mayores dificultades.
 

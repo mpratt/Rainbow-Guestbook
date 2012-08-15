@@ -1,6 +1,6 @@
 <?php
 /**
- * Rainbow.class.php
+ * Rainbow.php
  *
  * @package This file is part of the Rainbow Guestbook
  * @author  Michael Pratt <pratt@hablarmierda.net>
@@ -9,10 +9,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-if (!defined('RAINBOW')) {
-    header('Location: index.php');
-    die();
-}
 
 class Rainbow
 {
@@ -32,7 +28,7 @@ class Rainbow
      *
      * @param string $text The body of the Message
      * @param string $color The color of the Message (Hexadecimal)
-     * @return void
+     * @return int
      */
     public function create($text, $color)
     {
@@ -54,7 +50,7 @@ class Rainbow
      * @param int $id The id of the parent Message
      * @param string $text The body of the Message
      * @param string $color The color of the Message (Hexadecimal)
-     * @return void
+     * @return bool
      */
     public function reply($id, $text, $color)
     {
@@ -64,7 +60,11 @@ class Rainbow
             $stmt = $this->pdo->prepare('INSERT INTO rainbow_messages (parent_id, message, color, date) VALUES (?, ?, ?, ?)');
             $stmt->execute(array($id, $text, $color, date('Y-m-d')));
             unset($stmt);
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -222,6 +222,39 @@ class Rainbow
                                               ORDER BY id DESC) AS r ON (m.id = r.parent_id)
                                    WHERE m.parent_id = 0
                                    GROUP BY m.id
+                                   ORDER BY r.id DESC
+                                   LIMIT ' . (int) $limit);
+
+        $messages = array();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+        {
+            $messages[] = array('text'   => $this->output($row['message']),
+                                'id'     => $row['id'],
+                                'color'  => $row['color'],
+                                'date'   => $row['rdate'],
+                                'replies' => $row['total']);
+        }
+        unset($stmt);
+
+        return $messages;
+    }
+
+    /**
+     * Fetches The different colors
+     *
+     * @param int $limit
+     * @return array
+     */
+    public function fetchColors($limit = 500)
+    {
+        $stmt = $this->pdo->query('SELECT m.id, m.message, m.color, m.date, COUNT(r.parent_id) AS total, r.date AS rdate
+                                   FROM rainbow_messages AS m
+                                   LEFT JOIN (SELECT *
+                                              FROM rainbow_messages
+                                              WHERE parent_id > 0
+                                              ORDER BY id DESC) AS r ON (m.id = r.parent_id)
+                                   WHERE m.parent_id = 0
+                                   GROUP BY m.color
                                    ORDER BY r.id DESC
                                    LIMIT ' . (int) $limit);
 

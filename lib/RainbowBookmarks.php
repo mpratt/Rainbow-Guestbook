@@ -1,6 +1,6 @@
 <?php
 /**
- * RainbowBookmarks.class.php
+ * RainbowBookmarks.php
  * A class that bookmarks rainbow messages in a cookie
  *
  * @package This file is part of the Rainbow Guestbook
@@ -10,10 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-if (!defined('RAINBOW')) {
-     header('Location: index.php');
-     die();
-}
 
 class RainbowBookmarks
 {
