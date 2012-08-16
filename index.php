@@ -55,7 +55,7 @@
 
     // Get the Favorites
     $router->map('GET', '/api/getBookmarks/', function () use (&$rainbow) {
-        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : array());
+        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : '');
         $bookmarks = new RainbowBookmarks($cookie);
         echo json_encode($rainbow->fetchFavorite($bookmarks->getBookmarks()));
     }, array('Content-type' => 'application/json'));
@@ -77,7 +77,7 @@
 
     // Adds a message to the bookmark cookie
     $router->map('GET', '/api/bookmark/add/:id', function ($id) {
-        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : array());
+        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : '');
         $bookmarks = new RainbowBookmarks($cookie);
         $result = $bookmarks->setBookmark($id);
         echo json_encode(array('status' => (bool) $result));
@@ -85,7 +85,7 @@
 
     // Removes a message from the bookmark cookie
     $router->map('GET', '/api/bookmark/delete/:id', function ($id) {
-        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : array());
+        $cookie = (!empty($_COOKIE['rainbow_bookmarks']) ? $_COOKIE['rainbow_bookmarks'] : '');
         $bookmarks = new RainbowBookmarks($cookie);
         $result = $bookmarks->deleteBookmark($id);
         echo json_encode(array('status' => (bool) $result));

@@ -18,12 +18,15 @@ class RainbowBookmarks
     /**
      * Construct
      *
-     * @param array $cookie $_COOKIE['rainbow_bookmarks'];
+     * @param string $cookie $_COOKIE['rainbow_bookmarks'];
      * @return void
      */
     public function __construct($cookie)
     {
-        $this->cookie = $this->cleanCookie(unserialize($cookie));
+        if (!is_string($cookie))
+            $cookie = '';
+
+        $this->cookie = $this->cleanCookie(@unserialize($cookie));
 
         if (!is_array($this->cookie))
             $this->cookie = array();
